@@ -125,13 +125,28 @@ def Mstep(et, etw, etpw, etnw, t, tw, tpw, tnw):
 	ptw = np.zeros(etw.shape)
 	ptpw = np.zeros(etpw.shape)
 	ptnw = np.zeros(etnw.shape)
-
 	# c is the weight of real count
 	c = 100.0
 
 	# Estimate parameters pt, ptw, ptpw, ptnw based on the expected counts and real counts
 	# Your code here:
-
+	pt = c*t + et
+	ptw = c*tw + etw
+	ptpw = c*tpw + ptpw
+	ptnw = c*tnw + ptnw
+	
+	st = np.sum(pt, 0)
+	stw = np.sum(ptw, 1)
+	stpw = np.sum(ptpw, 1)
+	stnw = np.sum(ptnw, 1)
+	
+	
+	pt /= st
+	for i in range(T):
+		ptw[:][i] /= stw[i]
+		ptpw[:][i] /= stpw[i]
+		ptnw[:][i] /= stnw[i]
+		
 	return pt, ptw, ptpw, ptnw
 
 def EstepA(pt, ptw, ptpw, ptnw, wordList):
@@ -148,6 +163,7 @@ def EstepA(pt, ptw, ptpw, ptnw, wordList):
 	
 	for sent in wordList:
 		for pos in range(len(sent)):
+			pass
 			# Compute the posterior for each word
 			# Your code here:
 
@@ -403,7 +419,7 @@ def taskem(ratio):
 			pred = predictFunc[m](unlabelWordList, pt, ptw, ptpw, ptnw)
 			print 'Iter', iter + 1, 'Log-likelihood =', l, "Model accuracy:", evaluate(unlabelLabelList, pred)
 
-#task1()
+task1()
 #task2()
 #task3()
 
