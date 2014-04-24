@@ -160,15 +160,20 @@ def EstepA(pt, ptw, ptpw, ptnw, wordList):
 	etw = np.zeros((T, W))
 	etpw = np.zeros((T, W))
 	etnw = np.zeros((T, W))
-	
+
+	posterior = np.zeros((T,W))
 	for sent in wordList:
 		for pos in range(len(sent)):
-			pass
+			w = sent[pos]
 			# Compute the posterior for each word
-			# Your code here:
-
-			# Accumulate expected counts based on posterior
-			# Your code here:
+			sum_over_tags = 0.0
+			for t in range(T):
+				posterior[t][w] = ptw[t][w]
+				sum_over_tags += ptw[t][w]
+			for t in range(T):
+				posterior[t][w] /= sum_over_tags
+				# Accumulate expected counts based on posterior
+				etw[t][w] += posterior[t][w]
 
 	return et, etw, etpw, etnw
 
@@ -264,15 +269,25 @@ def predictA(wordList, pt, ptw, ptpw, ptnw):
 	# pred is the list of prediction, each element is a list of tag index predictions for each word in the sentence
 	# e.g. pred = [[1,2], [2,3]]
 	pred = []
+	T, W = ptw.shape
 
 	# Predict tag index in each sentence based on Model A
 	for sent in wordList:
 		cur_pred = []
 		for pos in range(len(sent)):
+			w = sent[pos]
 			# pred_tag is the prediction of tag for the current word
 			pred_tag = -1
-						
+			
+			best_tag = -1
+			best_prob = 0		
 			# Your code here:
+			for t in range(T):
+				prob = pt[t]*ptw[t][w]
+				if prob > best_prob:
+					best_prob = prob
+					best_tag = t
+			pred_tag = best_tag
 
 			# append the prediction to the list
 			cur_pred.append(pred_tag)
